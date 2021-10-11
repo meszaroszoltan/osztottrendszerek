@@ -1,0 +1,14 @@
+{
+  "name": "forming-tile-shapes-with-simple-robots",
+  "version": "1.0.0",
+  "description": "Forming tile shapes with simple robots - Számítógép hálózatok és osztott rendszerek beadandó",
+  "main": "./src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js"
+  },
+  "author": "Mészáros Zoltán",
+  "license": "All rights reserved",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

@@ -96,4 +96,7 @@ export class Robot {
     return available;
   }
 
+  getPosition() {
+    return this.#position;
+  }
 }

@@ -76,6 +76,30 @@ export class VisualGrid {
     return this.#state.has(hexToString(hex));
   }
 
+  easternColumn() {
+    var maximum = [0, 0]
+    function logSetElements(value) {
+      let new_value = [value[0], value[2]]
+      if (maximum[0] < new_value[0]) {
+        maximum = new_value
+      }
+    }
+    this.#state.forEach(logSetElements)
+    return Number(maximum[0])
+  }
+
+  northernRow(col) {
+    var minimum = [col, 100]
+    function logSetElements(value) {
+      let new_value = [value[0], value[2]]
+      if (minimum[1] > new_value[1] && new_value[0] == col) {
+        minimum = new_value
+      }
+    }
+    this.#state.forEach(logSetElements)
+    return Number(minimum[1])
+  }
+
   add(hex) {
     this.#state.add(hexToString(hex));
     this.#run();

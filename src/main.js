@@ -3,8 +3,13 @@ import { Robot } from './agents/robot.js';
 import { demoShape } from './agents/shapes.js';
 
 const grid = new VisualGrid(demoShape);
-const startColumn = grid.easternColumn()
-const robot = new Robot(grid, { q: 8, r: 1 });
+const startColumn = grid.easternColumn();
+console.log(startColumn);
+const robot = new Robot(grid, { q: 8, r: 2 });
+
+async function init() {
+  await moveE();
+}
 
 async function searchNextBranch() {
   while (1) {
@@ -38,11 +43,12 @@ async function checkOverhangs() {
       break;
     }
   }
+  console.log('LEPJ MAR KI!!!!');
   await moveE();
 }
 
 async function easternOverhang() {
-  if (robot.getPosition().q == 6 && robot.getPosition().r == 6) {
+  if (robot.getPosition().q == 6 && robot.getPosition().r == 6 && !robot.getAvailableMoves().includes('NE')) {
     console.log('true');
     return true;
   } else {
@@ -122,7 +128,6 @@ async function bringTile() {
   }
   await robot.move('SE');
   robot.placeTile();
-  return
   let moves = robot.getAvailableMoves();
   if (moves.includes('S')) {
     init();
@@ -156,5 +161,6 @@ async function getTileNW() {
 }
 
 (async () => {
+  await moveNorth();
   searchNextBranch();
 })();

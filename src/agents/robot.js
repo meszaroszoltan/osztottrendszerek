@@ -99,4 +99,8 @@ export class Robot {
   getPosition() {
     return this.#position;
   }
+
+  jump(position) {
+    this.#position = position;
+  }
 }

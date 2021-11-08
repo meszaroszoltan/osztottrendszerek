@@ -7,9 +7,28 @@
         width: 100vw;
         height: 100vh;
       }
+      .full-size {
+        height: 100%;
+        width: 100%;
+      }
+      #app {
+        display: flex;
+      }
     </style>
   </head>
   <body>
+    <div id="app" class="full-size">
+      <div class="full-size">
+        <button id="start1">Start</button>
+        <div id="grid1" class="full-size"></div>
+      </div>
+
+      <div class="full-size">
+        <button id="start2">Start</button>
+        <div id="grid2" class="full-size"></div>
+      </div>
+    </div>
+
     <script src="./src/lib/honeycomb.js" type="text/javascript"></script>
     <script src="./src/lib/svg.js" type="text/javascript"></script>
     <script src="./src/main.js" type="module"></script>

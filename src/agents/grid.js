@@ -14,11 +14,10 @@ export class VisualGrid {
   #robot;
   #debug;
 
-  constructor(state, gridWidth, gridHeight, debug = false) {
+  constructor(selector, state, tileColor, gridWidth, gridHeight, debug = false) {
     this.#GRID_WIDTH = gridWidth ?? this.#GRID_WIDTH;
     this.#GRID_HEIGHT = gridHeight ?? this.#GRID_HEIGHT;
-
-    console.log(this.#GRID_WIDTH);
+    this.tileColor = tileColor ?? '#FF0000'; // TODO: kinda ugly, fix this
 
     this.#state = new Set(state.map(hexToString));
     this.#debug = debug;
@@ -32,7 +31,7 @@ export class VisualGrid {
       rectangle({ start: [0, 0], width: this.#GRID_WIDTH , height: this.#GRID_HEIGHT }));
 
     this.#draw = SVG()
-      .addTo('body')
+      .addTo(selector)
       .size('100%', '100%');
 
     this.#run();

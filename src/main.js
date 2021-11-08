@@ -1,166 +1,30 @@
 import { VisualGrid } from './agents/grid.js';
 import { Robot } from './agents/robot.js';
-import { demoShape } from './agents/shapes.js';
+import { demoShape, heart } from './etc/shapes.js';
+import { run } from './etc/algo.js';
 
-const grid = new VisualGrid(demoShape);
-const startColumn = grid.easternColumn();
-console.log(startColumn);
-const robot = new Robot(grid, { q: 8, r: 2 });
+const grid1 = new VisualGrid('#grid1', heart);
+const robot1 = new Robot(grid1, { q: 5, r: 5 });
 
-async function init() {
-  await moveE();
-}
+document.getElementById('start1').addEventListener('click', async () => {
+  await robot1.move('NE');
+  await robot1.move('NE');
+  await robot1.move('SE');
+  robot1.liftTile()
+  await robot1.move('N');
+  await robot1.move('N');
+  await robot1.move('NW');
+  await robot1.move('SW');
+  await robot1.move('SW');
+  robot1.placeTile()
+  await robot1.move('NE');
+})
 
-async function searchNextBranch() {
-  while (1) {
-    let moves = robot.getAvailableMoves();
-    if (moves.includes('NW')) {
-      await robot.move('NW');
-      await moveNorth();
-    } else if (moves.includes('SW')) {
-      await robot.move('SW');
-      await moveNorth();
-    } else if (moves.includes('S')) {
-      await robot.move('S');
-    } else {
-      break;
-    }
-  }
-  await checkOverhangs();
-}
 
-async function checkOverhangs() {
-  await moveNorth();
-  while (1) {
-    console.log('ide is belep');
-    let moves = robot.getAvailableMoves();
-    if (await easternOverhang() == true) {
-      await getTileN();
-      console.log('always true');
-    } else if (moves.includes('S')) {
-      await robot.move('S');
-    } else {
-      break;
-    }
-  }
-  console.log('LEPJ MAR KI!!!!');
-  await moveE();
-}
+const grid2 = new VisualGrid('#grid2', demoShape, '#1434A4');
+const robot2 = new Robot(grid2, { q: 5, r: 5 });
 
-async function easternOverhang() {
-  if (robot.getPosition().q == 6 && robot.getPosition().r == 6 && !robot.getAvailableMoves().includes('NE')) {
-    console.log('true');
-    return true;
-  } else {
-    console.log('false');
-    return false;
-  }
-}
+document.getElementById('start2').addEventListener('click', async () => {
+  await run(robot2);
+})
 
-async function moveE() {
-  while (1) {
-    let moves = robot.getAvailableMoves();
-    if (moves.includes('SE')) {
-      await robot.move('SE');
-      moves = robot.getAvailableMoves();
-      if (moves.includes('S')) {
-        await robot.move('S');
-        await searchNextBranch();
-      } else {
-        await checkOverhangs();
-      }
-    } else if (moves.includes('NE')) {
-      await robot.move('NE');
-      moves = robot.getAvailableMoves();
-      if (moves.includes('S')) {
-        await robot.move('S');
-        await searchNextBranch();
-      } else {
-        await checkOverhangs();
-      }
-    } else if (moves.includes('N')) {
-      await robot.move('N');
-    } else {
-      break;
-    }
-  }
-  console.log('It is a tree!');
-}
-
-async function moveNorth() {
-  let moves = robot.getAvailableMoves();
-  while (moves.includes('N')) {
-    await robot.move('N');
-    moves = robot.getAvailableMoves();
-  }
-}
-
-async function getTileN() {
-  console.log('indulas');
-  await moveNorth();
-  let moves = robot.getAvailableMoves();
-  if (!moves.includes('NW') || moves.includes('SW')) {
-    await bringTile();
-  } else {
-    await getTileNW();
-  }
-}
-
-async function bringTile() {
-  console.log('bring');
-  robot.liftTile();
-  while(1) {
-    let moves = robot.getAvailableMoves();
-    if (moves.includes('NE')) {
-      await robot.move('S');
-      //await robot.move('SE');
-    } else {
-      break;
-    }
-  }
-  while(1) {
-    let moves = robot.getAvailableMoves();
-    if (moves.includes('SE')) {
-      await robot.move('S');
-    } else {
-      break;
-    }
-  }
-  await robot.move('SE');
-  robot.placeTile();
-  let moves = robot.getAvailableMoves();
-  if (moves.includes('S')) {
-    init();
-  } else {
-    await robot.move('SW');
-    getTileN();
-  }
-}
-
-async function getTileNW() {
-  console.log('NW');
-  let moves = robot.getAvailableMoves();
-  if (moves.includes('NW') && (!moves.includes('SW') && !moves.includes('N'))) {
-    await robot.move('NW');
-  } else if (moves.includes('N')) {
-    getTileN();
-  } else if (moves.includes('SW')) {
-    robot.liftTile();
-    await robot.move('S')
-    robot.placeTile();
-    moves = robot.getAvailableMoves();
-    if (moves.includes('S') || moves.includes('SE')) {
-      await robot.move('NE');
-      bringTile();
-    } else {
-      await robot.move('NE')
-    }
-  } else {
-    bringTile();
-  }
-}
-
-(async () => {
-  await moveNorth();
-  searchNextBranch();
-})();

@@ -1,4 +1,18 @@
-export async function run(robot) {
+export async function run1(robot) {
+  await robot.move('NE');
+  await robot.move('NE');
+  await robot.move('SE');
+  robot.liftTile()
+  await robot.move('N');
+  await robot.move('N');
+  await robot.move('NW');
+  await robot.move('SW');
+  await robot.move('SW');
+  robot.placeTile()
+  await robot.move('NE');
+}
+
+export async function run2(robot) {
   await moveNorth(robot);
   searchNextBranch(robot);
 }
@@ -17,7 +31,8 @@ async function searchNextBranch(robot) {
     }
     else if (moves.includes('S')) {
       await robot.move('S');
-    } else {
+    }
+    else {
       break;
     }
   }
@@ -47,8 +62,8 @@ async function checkOverhangs(robot) {
 
 async function easternOverhang(robot) {
   return (
-    robot.getPosition().q == 6 &&
-    robot.getPosition().r == 6 &&
+    robot.getPosition().q === 6 &&
+    robot.getPosition().r === 6 &&
     !robot.getAvailableMoves().includes('NE')
   )
 }
@@ -163,7 +178,8 @@ async function getTileNW(robot) {
     else {
       await robot.move('NE')
     }
-  } else {
+  }
+  else {
     bringTile(robot);
   }
 }

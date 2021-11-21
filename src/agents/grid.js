@@ -76,27 +76,25 @@ export class VisualGrid {
   }
 
   easternColumn() {
-    var maximum = [0, 0]
-    function logSetElements(value) {
-      let new_value = [value[0], value[2]]
+    let maximum = [0, 0];
+    this.#state.forEach(value => {
+      let new_value = [value[0], value[2]];
       if (maximum[0] < new_value[0]) {
-        maximum = new_value
+        maximum = new_value;
       }
-    }
-    this.#state.forEach(logSetElements)
-    return Number(maximum[0])
+    });
+    return Number(maximum[0]);
   }
 
   northernRow(col) {
-    var minimum = [col, 100]
-    function logSetElements(value) {
-      let new_value = [value[0], value[2]]
-      if (minimum[1] > new_value[1] && new_value[0] == col) {
-        minimum = new_value
+    let minimum = [col, 100];
+    this.#state.forEach(value => {
+      let new_value = [value[0], value[2]];
+      if (minimum[1] > new_value[1] && new_value[0] === col) {
+        minimum = new_value;
       }
-    }
-    this.#state.forEach(logSetElements)
-    return Number(minimum[1])
+    });
+    return Number(minimum[1]);
   }
 
   add(hex) {

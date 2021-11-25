@@ -78,7 +78,7 @@ Example:
   The robot picks up the tile it is currently standing on.  
   Only one tile can be carried at once.  
 
-- `placeTile(): void`  
+- `interact(): void`  
   the robot puts down the tile it is currently carrying
 
 - `getAvailableMoves(): str[]`  

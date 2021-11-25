@@ -1,16 +1,35 @@
-import { VisualGrid } from './agents/grid.js';
 import { Robot } from './agents/robot.js';
-import { demoShape, heart } from './etc/shapes.js';
-import { run1, run2 } from './etc/algo.js';
+import { VisualGrid } from './agents/grid.js';
+import { Constants, randInt, store } from './agents/utils.js';
+import { demoShape } from './agents/shapes.js';
 
-const grid1 = new VisualGrid('#grid1', heart);
-const robot1 = new Robot(grid1, { q: 5, r: 5 });
-document.getElementById('start1').addEventListener('click', async () => {
-  await run1(robot1);
+let grid = new VisualGrid('#grid', demoShape);
+let robot = new Robot(grid, { q: 5, r: 5 });
+
+document.getElementById('edit-toggle').addEventListener('click', () => {
+	store.isEditMode = !store.isEditMode;
 })
 
-const grid2 = new VisualGrid('#grid2', demoShape, '#1434A4');
-const robot2 = new Robot(grid2, { q: 5, r: 5 });
-document.getElementById('start2').addEventListener('click', async () => {
-  await run2(robot2);
+let speedToggled = false;
+document.getElementById('speed-toggle').addEventListener('click', () => {
+	speedToggled = !speedToggled;
+	store.speed = speedToggled ? 25 : 400;
+})
+
+document.getElementById('random-button').addEventListener('click', () => {
+	const shape = [];
+	const numberOfTiles = Constants.GRID_HEIGHT * Constants.GRID_WIDTH * 0.6;
+	for (let i = 0; i < numberOfTiles; i++) {
+		shape.push({
+			q: randInt(0, Constants.GRID_HEIGHT),
+			r: randInt(0, Constants.GRID_WIDTH)
+		})
+	}
+	document.getElementById('grid').innerHTML = '';
+	grid = new VisualGrid('#grid', shape);
+	robot = new Robot(grid, shape[0]);
+})
+
+document.getElementById('start-button').addEventListener('click', async () => {
+	await robot.start();
 })

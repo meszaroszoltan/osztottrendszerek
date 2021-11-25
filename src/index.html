@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Forming tile shapes with simple robots</title>
+    <link href="frontend/styles.css" rel="stylesheet">
+    <link href="frontend/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="app">
+    <h1>Forming tile shapes with simple robots</h1>
+
+    <div id="buttons">
+        <input id="edit-toggle" type="checkbox" class="btn-check" autocomplete="off">
+        <label class="btn btn-outline-info" for="edit-toggle">Edit mode</label>
+
+        <input id="speed-toggle" type="checkbox" class="btn-check" autocomplete="off">
+        <label class="btn btn-outline-info" for="speed-toggle">Fast mode</label>
+
+        <button id="random-button" type="button" class="btn btn-secondary">Random</button>
+        <button id="start-button" type="button" class="btn btn-primary">Start</button>
+    </div>
+
+    <div id="agents">
+        <div id="grid"></div>
+        <div>
+            <div id="stats">
+                <p>
+                    <b>Grid: </b>
+                    <span id="grid-info"></span>
+                </p>
+                <p>
+                    <b>Moves: </b>
+                    <span id="moves">0</span>
+                </p>
+                <p>
+                    <b>Carrying tile: </b>
+                    <span id="carry">false</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="frontend/bootstrap.bundle.min.js" type="text/javascript"></script>
+<script src="frontend/honeycomb.js" type="text/javascript"></script>
+<script src="frontend/svg.js" type="text/javascript"></script>
+<script src="main.js" type="module"></script>
+</body>
+</html>

@@ -1,149 +1,114 @@
+import { Constants, hexToString, setGridInfo, store } from './utils.js';
+
 const { createHexPrototype, Grid, rectangle } = globalThis.Honeycomb;
-const hexToString = x => `${x.q},${x.r}`;
-const stringToHex = x => {
-  const [q, r] = x.split(',').map(s => +s);
-  return {q, r};
-}
 
 export class VisualGrid {
-  #GRID_WIDTH = 100;
-  #GRID_HEIGHT = 100;
+	#grid;
+	#draw;
+	#state;
+	#robotPosition;
 
-  tileColor = '#FF0000';
-  robotColor = '#BEBEBE';
+	constructor(selector, state) {
+		this.#state = new Set(state.map(hexToString));
 
-  #grid;
-  #draw;
-  #state;
-  #robot;
+		const hexPrototype = createHexPrototype({
+			dimensions: 25,
+			orientation: 'flat',
+			origin: 'topLeft'
+		});
 
-  #debugMode;
-  #builderMode;
+		this.#grid = new Grid(hexPrototype,
+			rectangle({ start: [0, 0], width: Constants.GRID_WIDTH, height: Constants.GRID_HEIGHT }));
 
-  constructor(selector, state, tileColor, gridWidth, gridHeight, debug = false) {
-    this.#GRID_WIDTH = gridWidth ?? this.#GRID_WIDTH;
-    this.#GRID_HEIGHT = gridHeight ?? this.#GRID_HEIGHT;
-    this.tileColor = tileColor ?? '#FF0000'; // TODO: kinda ugly, fix this
+		this.#draw = SVG()
+			.addTo(selector)
+			.size('100%', '100%');
 
-    this.#state = new Set(state.map(hexToString));
-    if (state.length === 0) {
-      this.#builderMode = true;
-      console.log(`here`)
-    }
-    this.#debugMode = debug;
+		setGridInfo();
+	}
 
-    const hexPrototype = createHexPrototype({
-      dimensions: 25,
-      orientation: 'flat',
-      origin: 'topLeft'
-    });
-    this.#grid = new Grid(hexPrototype,
-      rectangle({ start: [0, 0], width: this.#GRID_WIDTH , height: this.#GRID_HEIGHT }));
+	#run() {
+		this.#draw.clear();
 
-    this.#draw = SVG()
-      .addTo(selector)
-      .size('100%', '100%');
+		this.#grid = this.#grid.each(hex => {
+			const s = hexToString(hex);
+			if (s === this.#robotPosition) {
+				this.#render(hex, Constants.ROBOT_COLOR);
+			}
+			else if (this.#state.has(s)) {
+				this.#render(hex, Constants.GRID_TILE_COLOR);
+			}
+			else {
+				this.#render(hex, Constants.GRID_EMPTY_COLOR);
+			}
+		}).run();
+	}
 
-    this.#run();
-  }
+	#render(hex, color) {
+		const polygon = this.#draw
+			.polygon(hex.corners.map(({ x, y }) => `${x},${y}`))
+			.fill(color)
+			.stroke({ width: 1, color })
+			.attr({
+				stroke: '#000',
+				'stroke-width': 1
+			})
+			.click(() => {
+				if (store.isEditMode) {
+					const { q, r } = hex;
+					if (this.hasTile({ q, r })) {
+						this.remove({ q, r });
+					}
+					else {
+						this.add({ q, r });
+					}
+					this.#run();
+				}
+			})
+			;
+		return this.#draw.group().add(polygon);
+	}
 
-  #run() {
-    if (this.#debugMode) console.log('drawing grid...');
-    this.#draw.clear();
+	add(hex) {
+		this.#state.add(hexToString(hex));
+		this.#run();
+	}
 
-    this.#grid = this.#grid.each(hex => {
+	remove(hex) {
+		this.#state.delete(hexToString(hex));
+		this.#run();
+	}
 
-      const s = hexToString(hex);
+	set robot(r) {
+		this.#robotPosition = hexToString(r);
+		this.#run();
+	}
 
-      if (s === this.#robot) {
-        this.#render(hex, this.robotColor);
-      }
-      else if (this.#state.has(s)) {
-        this.#render(hex, this.tileColor);
-      }
-      else if (this.#builderMode) {
-        this.#render(hex, '#FFFFFF');
-      }
-    })
-    .run();
-  }
+	hasTile(hex) {
+		return this.#state.has(hexToString(hex));
+	}
 
-  //FIXME: This is ugly af.
-  #render(hex, color) {
-    if (this.#debugMode) console.log(hex);
-    const that = this; // I am sorry.
+	easternColumn() {
+		let maximum = [0, 0];
+		this.#state.forEach(value => {
+			let new_value = [value[0], value[2]];
+			if (maximum[0] < new_value[0]) {
+				maximum = new_value;
+			}
+		});
+		return Number(maximum[0]);
+	}
 
-    const polygon = this.#draw
-      .polygon(hex.corners.map(({ x, y }) => `${x},${y}`))
-      .fill(color)
-      .stroke({ width: 1, color })
-      .click(function(){
-        if (that.#builderMode) {
-          const {q, r} = hex;
+	northernRow(col) {
+		let minimum = [col, 100];
+		this.#state.forEach(value => {
+			let new_value = [value[0], value[2]];
+			if (minimum[1] > new_value[1] && new_value[0] === col) {
+				minimum = new_value;
+			}
+		});
+		return Number(minimum[1]);
+	}
 
-          if (that.#state.has(hexToString({q, r}))) {
-            that.remove({q, r});
-          }
-          else {
-            that.add({q, r});
-          }
-          that.#run();
-        }
-      });
-    polygon.attr({
-      stroke: '#000',
-      'stroke-width': 1
-    });
-    return this.#draw.group().add(polygon);
-  }
-
-  set robot(r) {
-    this.#robot = hexToString(r);
-    if (this.#debugMode) console.log(`robot: ${JSON.stringify(r)}`);
-    this.#run();
-  }
-
-  hasThisTile(hex) {
-    return this.#state.has(hexToString(hex));
-  }
-
-  easternColumn() { // u mean most eastern col?
-    let maximum = [0, 0];
-    this.#state.forEach(value => {
-      let new_value = [value[0], value[2]];
-      if (maximum[0] < new_value[0]) {
-        maximum = new_value;
-      }
-    });
-    return Number(maximum[0]);
-  }
-
-  northernRow(col) {
-    let minimum = [col, 100];
-    this.#state.forEach(value => {
-      let new_value = [value[0], value[2]];
-      if (minimum[1] > new_value[1] && new_value[0] === col) {
-        minimum = new_value;
-      }
-    });
-    return Number(minimum[1]);
-  }
-
-  add(hex) {
-    this.#state.add(hexToString(hex));
-    this.#run();
-  }
-
-  remove(hex) {
-    this.#state.delete(hexToString(hex));
-    this.#run();
-  }
-
-  exportState() {
-    return JSON.stringify(
-        [...this.#state]
-        .map(stringToHex)
-    );
-  }
 
 }

@@ -1,14 +1,15 @@
-import { startAlgorithm } from './algorithm.js';
 import { store, wait, setMoves, setCarrying } from './utils.js';
 
 export class Robot {
 	#grid;
+	#algorithm;
 	isCarrying;
 	position;
 	moves = 0;
 
-	constructor(grid, position) {
+	constructor(grid, position, algo) {
 		this.position = position;
+		this.#algorithm = algo;
 		this.#grid = grid;
 		this.#grid.robot = position;
 		setCarrying(false);
@@ -16,12 +17,10 @@ export class Robot {
 	}
 
 	async start() {
-		await startAlgorithm(this);
+		await this.#algorithm(this);
 	}
 
 	async move(direction) {
-		this.moves += 1;
-		setMoves(this.moves)
 		await wait(store.speed);
 
 		let { r, q } = this.position;
@@ -57,17 +56,14 @@ export class Robot {
 
 	async jump(position) {
 		await wait(store.speed * 2);
-		const dQ = Math.abs(this.position.q - position.q);
-		const dR = Math.abs(this.position.r - position.r);
-		this.moves += (dQ + dR);
-		console.log(this.position);
 		this.position = position;
 		this.#grid.robot = this.position;
-		console.log(this.position);
-
 	}
 
 	interact() {
+		this.moves += 1;
+		setMoves(this.moves);
+
 		if (this.isCarrying) {
 			// place
 			this.isCarrying = false;

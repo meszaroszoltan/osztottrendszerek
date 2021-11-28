@@ -1,4 +1,4 @@
-export async function startAlgorithm(robot) {
+export async function tree(robot) {
 	await moveNorth(robot);
 	await searchNextBranch(robot);
 }
@@ -169,4 +169,50 @@ async function getTileNW(robot) {
 	else {
 		await bringTile(robot);
 	}
+}
+
+export async function line(robot) {
+	while (robot.availableMoves.includes('S')) {
+		await robot.move('S');
+	}
+
+	while (true) {
+		const terminated = await tileSearchingPhase(robot);
+		if (terminated) {
+			break;
+		}
+		else {
+			await tileMovingPhase(robot);
+		}
+	}
+}
+
+async function tileSearchingPhase(robot) {
+	while (robot.availableMoves.includes('N')
+		|| robot.availableMoves.includes('NW')
+		|| robot.availableMoves.includes('SW')
+		) {
+		if (robot.availableMoves.includes('N')) {
+			await robot.move('N');
+		}
+		if (robot.availableMoves.includes('NW')) {
+			await robot.move('NW');
+		}
+		if (robot.availableMoves.includes('SW')) {
+			await robot.move('SW');
+		}
+	}
+
+	return !robot.availableMoves.includes('NE') && !robot.availableMoves.includes('SE')
+	&& !robot.availableMoves.includes('NW') && !robot.availableMoves.includes('SW')
+}
+
+async function tileMovingPhase(robot) {
+	robot.interact();
+	await robot.move('SE');
+	while (robot.availableMoves.includes('S')) {
+		await robot.move('S');
+	}
+	await robot.move('S');
+	robot.interact();
 }

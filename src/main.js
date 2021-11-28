@@ -1,10 +1,14 @@
 import { Robot } from './agents/robot.js';
 import { VisualGrid } from './agents/grid.js';
 import { Constants, randInt, store } from './agents/utils.js';
-import { shapeWithOverhang } from './agents/shapes.js';
+import { simple, demoShape } from './agents/shapes.js';
+import { line, tree } from './agents/algorithm.js';
 
-let grid = new VisualGrid('#grid', shapeWithOverhang);
-let robot = new Robot(grid, { q: 5, r: 5 });
+let grid = new VisualGrid('#grid', simple);
+let robot = new Robot(grid, { q: 3, r: 3 }, line);
+
+//let grid = new VisualGrid('#grid', demoShape);
+//let robot = new Robot(grid, { q: 5, r: 5 }, tree);
 
 document.getElementById('edit-toggle').addEventListener('click', () => {
 	store.isEditMode = !store.isEditMode;

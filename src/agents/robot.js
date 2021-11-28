@@ -60,7 +60,11 @@ export class Robot {
 		const dQ = Math.abs(this.position.q - position.q);
 		const dR = Math.abs(this.position.r - position.r);
 		this.moves += (dQ + dR);
+		console.log(this.position);
 		this.position = position;
+		this.#grid.robot = this.position;
+		console.log(this.position);
+
 	}
 
 	interact() {
@@ -100,6 +104,10 @@ export class Robot {
 			available.push('NW');
 		}
 		return available;
+	}
+
+	get grid() {
+		return this.#grid;
 	}
 
 }

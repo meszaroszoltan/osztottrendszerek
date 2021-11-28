@@ -89,26 +89,26 @@ export class VisualGrid {
 	}
 
 	easternColumn() {
-		let maximum = [0, 0];
+		let maximum = 0;
 		this.#state.forEach(value => {
-			let new_value = [value[0], value[2]];
-			if (maximum[0] < new_value[0]) {
-				maximum = new_value;
+			value = Number(value.split(',')[0]);
+			if (value > maximum) {
+				maximum = value;
 			}
 		});
-		return Number(maximum[0]);
+		return maximum;
 	}
 
 	northernRow(col) {
-		let minimum = [col, 100];
+		let minimum = 100;
 		this.#state.forEach(value => {
-			let new_value = [value[0], value[2]];
-			if (minimum[1] > new_value[1] && new_value[0] === col) {
-				minimum = new_value;
+			const valueRow = Number(value.split(',')[1]);
+			const valueCol = Number(value.split(',')[0]);
+			if (valueRow < minimum && valueCol === col) {
+				minimum = valueRow;
 			}
 		});
-		return Number(minimum[1]);
+		return minimum;
 	}
-
 
 }

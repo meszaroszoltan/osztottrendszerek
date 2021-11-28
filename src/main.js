@@ -1,9 +1,9 @@
 import { Robot } from './agents/robot.js';
 import { VisualGrid } from './agents/grid.js';
 import { Constants, randInt, store } from './agents/utils.js';
-import { demoShape } from './agents/shapes.js';
+import { shapeWithOverhang } from './agents/shapes.js';
 
-let grid = new VisualGrid('#grid', demoShape);
+let grid = new VisualGrid('#grid', shapeWithOverhang);
 let robot = new Robot(grid, { q: 5, r: 5 });
 
 document.getElementById('edit-toggle').addEventListener('click', () => {

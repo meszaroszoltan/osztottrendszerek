@@ -31,7 +31,7 @@ document.getElementById('random-button').addEventListener('click', () => {
 	}
 	document.getElementById('grid').innerHTML = '';
 	grid = new VisualGrid('#grid', shape);
-	robot = new Robot(grid, shape[0]);
+	robot = new Robot(grid, shape[0], line);
 })
 
 document.getElementById('start-button').addEventListener('click', async () => {

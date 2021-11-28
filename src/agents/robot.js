@@ -81,8 +81,8 @@ export class Robot {
 		setCarrying(this.isCarrying);
 	}
 
-	get availableMoves() {
-		let { r, q } = this.position;
+	availableMoves(position) {
+		let { r, q } = position ? position : this.position;
 		const available = [];
 
 		if (this.#grid.hasTile({ q, r: r - 1 })) {

@@ -81,5 +81,5 @@ Example:
 - `interact(): void`  
   the robot puts down the tile it is currently carrying
 
-- `getAvailableMoves(): str[]`  
+- `getavailableMoves()(): str[]`  
   return which neighboring tiles are occupied  

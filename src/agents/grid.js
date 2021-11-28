@@ -111,4 +111,7 @@ export class VisualGrid {
 		return minimum;
 	}
 
+	get state() {
+		return this.#state;
+	}
 }
